@@ -75,7 +75,7 @@ const products = [
 ];
 // Select DOM Elements
 const productsWarapper = document.getElementById('products-wrapper');
-const checkBoxes = document.querySelectorAll('check');
+const checkBoxes = document.querySelectorAll('input[type="checkbox"]');
 const filtresContainer = document.getElementById('filters-container');
 const searchInput = document.getElementById('search');
 const cartCount = document.getElementById('cart-count');
@@ -85,8 +85,8 @@ let cartItemCount =0;
 
 // init product ellement
 const productElements = [];
-filtresContainer.addEventListener('change',filtrProducts);
-searchInput.addEventListener('input',filtrProducts);
+filtresContainer.addEventListener('change',filterProducts);
+searchInput.addEventListener('input',filterProducts);
 
 
 // loop over products and create an element
@@ -141,4 +141,29 @@ function updateCart(e){
 
    //Update cart item count
    cartCount.innerText = cartItemCount.toString();
+}
+
+// filter products by checkboxes and input search
+function filterProducts(){
+  //Get search item
+  const searchTerm = searchInput.value.trim().toLowerCase();
+  //Get checked categories
+  const checkedCategories = Array.from(checkBoxes)
+  .filter((check)=>check.checked)
+  .map((check)=>check.value);
+
+  //loop over products and check for matchs
+  productElements.forEach((productElement,index)=>{
+   const product = products[index];
+
+   //check to see if the product matches the search input or checked categories
+   const matchesSearchTerm = product.name.toLowerCase().includes(searchTerm);
+   const isInCheckedCategory = checkedCategories.length === 0 || checkedCategories.includes(product.category);
+   // show or hide product based on the matches
+   if(matchesSearchTerm && isInCheckedCategory){
+    productElement.classList.remove('hidden');
+   }else{
+    productElement.classList.add('hidden');
+   }
+  });
 }
